@@ -1,21 +1,25 @@
 package extractor.main;
-import java.awt.geom.Area;
+
 
 import java.io.IOException;
+
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.concurrent.ThreadLocalRandom;
-import mil.nga.tiff.FileDirectory;
-import mil.nga.tiff.FileDirectoryEntry;
-import mil.nga.tiff.Rasters;
-import mil.nga.tiff.TIFFImage;
-import mil.nga.tiff.TiffReader;
+import java.net.URL;
+import java.nio.channels.*;
+
+import java.io.*;
+import org.apache.commons.io.FileUtils;
+
 
 public class Main {
 
     public static void main( String[] args ) throws IOException
     {
-        // 1041,240 - px pidi ostrova u GB 29UPR4 jeho ID
+        URL url = new URL("http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_tmin.zip");
+        File file = new File("world/min/minimum.zip");
+        FileUtils.copyURLToFile(url, file);
+
 
         // HashMap stores data from european mammals, cgrs cells with coors
         GeoTiff avgTempJan = new GeoTiff("world/wc2.0_10m_tavg_01.tif");

@@ -1,0 +1,4 @@
+world2/tmin/tmin.zip
+world2/tmax/tmax.zip
+world2/tavg/tavg.zip
+world2/prec/prec.zip

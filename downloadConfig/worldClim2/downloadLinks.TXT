@@ -1,0 +1,7 @@
+https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_tmin.zip = world2/tmin/tmin.zip
+https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_tmax.zip = world2/tmax/tmax.zip
+https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_tavg.zip = world2/tavg/tavg.zip
+https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_prec.zip = world2/prec/prec.zip
+https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_srad.zip = world2/srad/srad.zip
+https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_wind.zip = world2/wind/wind.zip
+https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_vapr.zip = world2/wind/wind.zip

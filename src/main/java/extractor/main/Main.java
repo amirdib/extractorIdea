@@ -16,13 +16,11 @@ public class Main {
 
     public static void main( String[] args ) throws IOException
     {
-        URL url = new URL("http://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_tmin.zip");
-        File file = new File("world/min/minimum.zip");
-        FileUtils.copyURLToFile(url, file);
 
+        WorldClimDownloader worldClimDownloader = new WorldClimDownloader();
 
         // HashMap stores data from european mammals, cgrs cells with coors
-        GeoTiff avgTempJan = new GeoTiff("world/wc2.0_10m_tavg_01.tif");
+        GeoTiff avgTempJan = new GeoTiff("world2/tavg/wc2.0_10m_tavg_01.tif");
         MammalsMapExtractor mMapExtractor = new MammalsMapExtractor();
         MammalsExtractor mExtractor = new MammalsExtractor();
 

@@ -3,6 +3,7 @@ package extractor.main;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.net.URL;
@@ -23,6 +24,7 @@ public class Main {
         GeoTiff avgTempJan = new GeoTiff("world2/tavg/wc2.0_10m_tavg_01.tif");
         MammalsMapExtractor mMapExtractor = new MammalsMapExtractor();
         MammalsExtractor mExtractor = new MammalsExtractor();
+        //var neco = new ArrayList<String>();
 
         HashMap<String,double[]> mammalsMap = mMapExtractor.getAreas();
 

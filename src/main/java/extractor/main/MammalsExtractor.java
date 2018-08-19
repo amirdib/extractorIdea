@@ -27,7 +27,7 @@ public class MammalsExtractor {
         this.urlToMap = "https://www.european-mammals.org/php/rendermap.php?latname=";
         this.urlToSpecies = "https://www.european-mammals.org/php/mapmaker.php";
         //System.out.println(downloadWebPage(this.urlToMap + getSpecies().get(0)));
-        //getMammalsPresence();
+        System.out.println(getMammalsPresence());
         //;
 
     }
@@ -81,16 +81,13 @@ public class MammalsExtractor {
 
         //parse dataPoints
         while(strBuilder.indexOf("id") != -1) {
-            int startIndex = strBuilder.indexOf("id");
-            int endIndex = strBuilder.indexOf("x");
+
             String id;
             String phase;
-            id = strBuilder.substring(startIndex+6,endIndex-2);
-            startIndex = strBuilder.indexOf("#");
-            endIndex = strBuilder.indexOf("/>");
+            id = strBuilder.substring(strBuilder.indexOf("id")+6,strBuilder.indexOf("x")-2);
+            phase = strBuilder.substring(strBuilder.indexOf("#"),strBuilder.indexOf("/>"));
+            strBuilder.delete(0, strBuilder.indexOf("/>")+2);
 
-            phase = strBuilder.substring(startIndex,endIndex);
-            strBuilder.delete(0, endIndex+2);
             if(phase.contains("post")) {
                 postLocations.add(id);
             }else {
@@ -105,6 +102,7 @@ public class MammalsExtractor {
     public List<Mammal> getMammalsPresence() {
         return getSpecies().stream()
                 .map(s -> extractMammal(s))
+                .limit(1)
                 .collect(Collectors.toList());
     }
 

@@ -66,6 +66,7 @@ public class MammalsMapExtractor {
         try (FileWriter file = new FileWriter(path)) {
             file.write(obj.toString());
 
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

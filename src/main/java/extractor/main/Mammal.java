@@ -27,6 +27,7 @@ public class Mammal {
         return postLocations;
     }
 
+
     @Override
     public String toString() {
         return "Mammal [name=" + name + ", preLocations=" + preLocations + ", postLocations=" + postLocations + "]";

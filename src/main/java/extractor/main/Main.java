@@ -11,10 +11,12 @@ import java.io.*;
 
 import org.apache.commons.io.FileUtils;
 
+import javax.xml.bind.JAXBException;
+
 
 public class Main {
 
-    public static void main( String[] args ) throws IOException {
+    public static void main( String[] args ) throws IOException, JAXBException {
 
         WorldClimDownloader worldClimDownloader = new WorldClimDownloader();
 
@@ -43,7 +45,10 @@ public class Main {
 
         ArrayList<String> mammalAreas = new ArrayList<>(mammalsMap.keySet());
         long starttime = System.nanoTime();
+        System.out.println("List of Mammals startDownload");
         List<Mammal> mammals = mExtractor.getMammalsPresence();
+        /*
+        System.out.println("List of Mammals downloaded");
         for (int i = 0; i < mammals.size(); i++) {
 
             for (String l : mammals.get(i).getPostLocations()) {
@@ -65,11 +70,12 @@ public class Main {
                 }
 
             }
+            System.out.println( i +" mammal processed");
 
         }
         long endtime = System.nanoTime();
-        System.out.println(endtime- starttime);
-
+        System.out.println((endtime- starttime) / 1000000);
+/*
         File finalMatrixFile = new File("world2/matrix.txt");
         finalMatrixFile.createNewFile();
         FileOutputStream fout = new FileOutputStream(finalMatrixFile);
@@ -83,7 +89,7 @@ public class Main {
         }
 
         fout.close();
-
+*/
 
 
         //System.out.println("Coordinates of area 29UPR4 " + Arrays.toString(biggerPoly));

@@ -15,6 +15,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.w3c.dom.*;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.parsers.*;
+import java.io.*;
 
 public class MammalsExtractor {
 
@@ -95,14 +102,28 @@ public class MammalsExtractor {
             }
 
         }
-
+        System.out.println(mammalName);
         return new Mammal(mammalName, preLocations, postLocations);
     }
 
-    public List<Mammal> getMammalsPresence() {
-        return getSpecies().stream()
-                .map(s -> extractMammal(s))
+    public List<Mammal> getMammalsPresence() throws JAXBException {
+        List<Mammal> mammals = getSpecies().stream()
+                .map(this::extractMammal)
+                .limit(1)
                 .collect(Collectors.toList());
+        saveMammalsPresence(mammals);
+        return mammals;
+    }
+
+    private void saveMammalsPresence(List<Mammal> mammals) throws JAXBException {
+
+        JAXBContext jaxbContext = JAXBContext.newInstance(Mammal.class);
+        Marshaller marshaller = jaxbContext.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        marshaller.marshal(mammals.get(0), new File("mammals/product.xml"));
+        marshaller.marshal(mammals.get(0), System.out);
+
+
     }
 
 

@@ -4,4 +4,4 @@ https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_tavg.zip = wor
 https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_prec.zip = world2/prec/prec.zip
 https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_srad.zip = world2/srad/srad.zip
 https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_wind.zip = world2/wind/wind.zip
-https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_vapr.zip = world2/wind/wind.zip
+https://biogeo.ucdavis.edu/data/worldclim/v2.0/tif/base/wc2.0_10m_vapr.zip = world2/vapr/vapr.zip

@@ -26,8 +26,8 @@ public class MammalsExtractor {
     public MammalsExtractor() {
         this.urlToMap = "https://www.european-mammals.org/php/rendermap.php?latname=";
         this.urlToSpecies = "https://www.european-mammals.org/php/mapmaker.php";
-        //System.out.println(downloadWebPage(this.urlToMap + getSpecies().get(0)));
-        System.out.println(getMammalsPresence());
+
+        //System.out.println(getMammalsPresence());
         //;
 
     }
@@ -102,7 +102,6 @@ public class MammalsExtractor {
     public List<Mammal> getMammalsPresence() {
         return getSpecies().stream()
                 .map(s -> extractMammal(s))
-                .limit(1)
                 .collect(Collectors.toList());
     }
 

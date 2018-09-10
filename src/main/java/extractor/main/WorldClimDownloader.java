@@ -41,14 +41,16 @@ public class WorldClimDownloader {
                     + url.substring(url.indexOf("m_") + 2, url.indexOf(".zip"))
                     + " from " + path.substring(0, path.indexOf("/")));
 
-            try {
+            try{
                 URL urlDownload = new URL(url);
                 FileUtils.copyURLToFile(urlDownload, file);
                 unzip(file.getPath());
-            } catch (IOException e) {
-                e.printStackTrace();
+            }catch(Exception e){
+
             }
+
         }
+
 
         System.out.println("Downloaded "
                 + url.substring(url.indexOf("m_") + 2,url.indexOf(".zip"))
@@ -66,8 +68,9 @@ public class WorldClimDownloader {
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
 
                 StringBuilder stringBuilder = new StringBuilder(path);
+
                 stringBuilder.reverse()
-                        .delete(0,stringBuilder.indexOf("/"))
+                        .delete(0,stringBuilder.indexOf(File.separator))
                         .reverse();
 
                 File file = new File(stringBuilder.toString() + zipEntry.getName());

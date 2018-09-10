@@ -3,20 +3,18 @@ package extractor.main;
 
 import java.io.IOException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.net.URL;
 import java.nio.channels.*;
 
 import java.io.*;
+
 import org.apache.commons.io.FileUtils;
 
 
 public class Main {
 
-    public static void main( String[] args ) throws IOException
-    {
+    public static void main( String[] args ) throws IOException {
 
         WorldClimDownloader worldClimDownloader = new WorldClimDownloader();
 
@@ -26,15 +24,74 @@ public class Main {
         MammalsExtractor mExtractor = new MammalsExtractor();
         //var neco = new ArrayList<String>();
 
-        HashMap<String,double[]> mammalsMap = mMapExtractor.getAreas();
 
-        double[] biggerPoly = mammalsMap.get("29UPR4");
-        MammalArea mArea = new MammalArea("29UPR4",biggerPoly);
+        HashMap<String, double[]> mammalsMap = mMapExtractor.getAreas();
 
-        System.out.println("Coordinates of area 29UPR4 " + Arrays.toString(biggerPoly));
 
-        System.out.println(avgTempJan.getAvgFromNeighborhood(mArea, 2));
+        ArrayList<String> bioVariables = new ArrayList<>();
+        File folder = new File("world2");
+        for (File e : folder.listFiles()) {
+            bioVariables.add(e.getName());
+        }
+        int numberOfAreas = mammalsMap.size();
+        int numberOfSpecies = mExtractor.getSpecies().size();
+        int numberOfCols = numberOfAreas * bioVariables.size() * 12;
+        byte[][] finalMatrix = new byte[numberOfSpecies][numberOfCols];
+        Set<String> missinAreas = new HashSet<>();
+
+
+
+        ArrayList<String> mammalAreas = new ArrayList<>(mammalsMap.keySet());
+        long starttime = System.nanoTime();
+        List<Mammal> mammals = mExtractor.getMammalsPresence();
+        for (int i = 0; i < mammals.size(); i++) {
+
+            for (String l : mammals.get(i).getPostLocations()) {
+                int index = mammalAreas.indexOf(l);
+                if(index == -1){
+                    //System.out.println(l);
+                    //System.out.println(mammals.get(i));
+                    //missinAreas.add(l);
+                    continue;
+                }
+                finalMatrix[i][index] = 1;
+                index += numberOfAreas;
+                for(int j = 0; j < bioVariables.size(); j++){
+                    for(int k = 0; k < 12; k++){
+                       finalMatrix[i][index + k] = 1;
+
+                    }
+                    index += numberOfAreas;
+                }
+
+            }
+
+        }
+        long endtime = System.nanoTime();
+        System.out.println(endtime- starttime);
+
+        File finalMatrixFile = new File("world2/matrix.txt");
+        finalMatrixFile.createNewFile();
+        FileOutputStream fout = new FileOutputStream(finalMatrixFile);
+
+        for (int i = 0; i < finalMatrix.length; i++) {
+            for (int j = 0; j < finalMatrix[i].length; j++) {
+
+                fout.write(String.valueOf(finalMatrix[i][j]).getBytes());
+            }
+            fout.write(System.getProperty("line.separator").getBytes());
+        }
+
+        fout.close();
+
+
+
+        //System.out.println("Coordinates of area 29UPR4 " + Arrays.toString(biggerPoly));
+        //System.out.println(avgTempJan.getAvgFromNeighborhood(mArea, 2));
         System.out.println(avgTempJan.getPxValue(1041, 240));
+
+
+
 
     }
 }

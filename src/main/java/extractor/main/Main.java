@@ -16,7 +16,7 @@ import javax.xml.bind.JAXBException;
 
 public class Main {
 
-    public static void main( String[] args ) throws IOException, JAXBException {
+    public static void main( String[] args ) throws IOException {
 
         WorldClimDownloader worldClimDownloader = new WorldClimDownloader();
 
@@ -94,7 +94,7 @@ public class Main {
 
         //System.out.println("Coordinates of area 29UPR4 " + Arrays.toString(biggerPoly));
         //System.out.println(avgTempJan.getAvgFromNeighborhood(mArea, 2));
-        System.out.println(avgTempJan.getPxValue(1041, 240));
+        //System.out.println(avgTempJan.getPxValue(1041, 240));
 
 
 

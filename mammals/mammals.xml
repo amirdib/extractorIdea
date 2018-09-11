@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><Mammals>
+    <Mammal>
+        <name>Macropus+rufogriseus</name>
+        <preLocations/>
+        <posLocations>
+            <posLocation>30UVF2</posLocation>
+            <posLocation>30UWB4</posLocation>
+            <posLocation>30UWD3</posLocation>
+            <posLocation>30UWD4</posLocation>
+            <posLocation>30UWF3</posLocation>
+            <posLocation>30VUH1</posLocation>
+            <posLocation>30VUH4</posLocation>
+        </posLocations>
+    </Mammal>
+</Mammals>

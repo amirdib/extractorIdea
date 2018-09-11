@@ -16,11 +16,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.parsers.*;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
 public class MammalsExtractor {
@@ -106,22 +113,129 @@ public class MammalsExtractor {
         return new Mammal(mammalName, preLocations, postLocations);
     }
 
-    public List<Mammal> getMammalsPresence() throws JAXBException {
-        List<Mammal> mammals = getSpecies().stream()
-                .map(this::extractMammal)
-                .limit(1)
-                .collect(Collectors.toList());
-        saveMammalsPresence(mammals);
-        return mammals;
+    public List<Mammal> getMammalsPresence() {
+        String path = "mammals/mammals.xml";
+        File mammalsXmlStorage = new File(path);
+
+        if(mammalsXmlStorage.exists()){
+            return getMammalsFromXml(path);
+        }else{
+            List<Mammal> mammals = getSpecies().stream()
+                    .map(this::extractMammal)
+                    .limit(1)
+                    .collect(Collectors.toList());
+            mammalsToXml(mammals, path);
+            return mammals;
+        }
     }
 
-    private void saveMammalsPresence(List<Mammal> mammals) throws JAXBException {
+    private List<Mammal> getMammalsFromXml(String path){
 
-        JAXBContext jaxbContext = JAXBContext.newInstance(Mammal.class);
-        Marshaller marshaller = jaxbContext.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(mammals.get(0), new File("mammals/product.xml"));
-        marshaller.marshal(mammals.get(0), System.out);
+        try{
+            File xmlFile = new File(path);
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(xmlFile);
+            doc.getDocumentElement().normalize();
+            NodeList mammalNodeList = doc.getElementsByTagName("Mammal");
+            List<Mammal> mammalList = new ArrayList<>();
+            
+
+            for(int i = 0; i < mammalNodeList.getLength(); i++){
+                NodeList mammalAtritubes = mammalNodeList.item(i).getChildNodes();
+                NodeList preLocations = mammalAtritubes.item(3).getChildNodes();
+                NodeList posLocations = mammalAtritubes.item(5).getChildNodes();
+
+                String mammalName = mammalAtritubes.item(1).getTextContent();
+                List<String> preLocationsFinal = new ArrayList<>();
+                List<String> posLocationsFinal = new ArrayList<>();
+
+                for (int k = 0; k < preLocations.getLength(); k++) {
+                    Node childNode = preLocations.item(k);
+
+                    if (childNode.getNodeType() != Node.ELEMENT_NODE) {
+                        continue;
+                    }
+                    preLocationsFinal.add(childNode.getTextContent());
+                }
+                for (int j = 0; j < posLocations.getLength(); j++) {
+                    Node childNode = posLocations.item(j);
+
+                    if (childNode.getNodeType() != Node.ELEMENT_NODE) {
+                        continue;
+                    }
+                    posLocationsFinal.add(childNode.getTextContent());
+                }
+                mammalList.add(new Mammal(mammalName,preLocationsFinal,posLocationsFinal));
+                
+            }
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<Mammal>();
+
+    }
+
+    private void mammalsToXml(List<Mammal> mammals, String path) {
+        try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+
+            // Create root element mammals
+            Element mammalsRootElement = doc.createElement( "Mammals" );
+            doc.appendChild( mammalsRootElement );
+
+            // iterate over mammals, adding them into xml doc
+            for( Mammal m : mammals ){
+                Element mammalElement = doc.createElement( "Mammal" );
+                Element nameElement = doc.createElement( "name");
+                nameElement.appendChild(doc.createTextNode(m.getName()));
+                mammalElement.appendChild(nameElement);
+
+                // add prelocations to XML
+                Element preLocationsRootElement = doc.createElement("preLocations");
+                for(String pre: m.getPreLocations()) {
+                        Element preLocation = doc.createElement("preLocation");
+                        preLocation.appendChild(doc.createTextNode(pre));
+                        preLocationsRootElement.appendChild(preLocation);
+                }
+                mammalElement.appendChild(preLocationsRootElement);
+
+                // add postLocations to XML
+                Element posLocationsRootElement = doc.createElement("posLocations");
+                for(String post: m.getPostLocations()) {
+                    Element posLocation = doc.createElement("posLocation");
+                    posLocation.appendChild(doc.createTextNode(post));
+                    posLocationsRootElement.appendChild(posLocation);
+                }
+                mammalElement.appendChild(posLocationsRootElement);
+                mammalsRootElement.appendChild( mammalElement );
+
+
+            }
+
+            // transforms xml doc to string
+            TransformerFactory tf = TransformerFactory.newInstance();
+            StringWriter writer = new StringWriter();
+            Transformer transformer = tf.newTransformer();
+            transformer.transform( new DOMSource( doc ), new StreamResult( writer ) );
+            //personXMLStringValue = writer.getBuffer().toString();
+            Files.write(Paths.get(path), writer.getBuffer().toString().getBytes());
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
     }

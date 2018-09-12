@@ -122,7 +122,6 @@ public class MammalsExtractor {
         }else{
             List<Mammal> mammals = getSpecies().stream()
                     .map(this::extractMammal)
-                    .limit(1)
                     .collect(Collectors.toList());
             mammalsToXml(mammals, path);
             return mammals;

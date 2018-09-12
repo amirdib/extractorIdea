@@ -24,11 +24,11 @@ public class Main {
         GeoTiff avgTempJan = new GeoTiff("world2/tavg/wc2.0_10m_tavg_01.tif");
         MammalsMapExtractor mMapExtractor = new MammalsMapExtractor();
         MammalsExtractor mExtractor = new MammalsExtractor();
-        //var neco = new ArrayList<String>();
+
 
 
         HashMap<String, double[]> mammalsMap = mMapExtractor.getAreas();
-
+        List<Mammal> mammals = mExtractor.getMammalsPresence();
 
         ArrayList<String> bioVariables = new ArrayList<>();
         File folder = new File("world2");
@@ -36,8 +36,10 @@ public class Main {
             bioVariables.add(e.getName());
         }
         int numberOfAreas = mammalsMap.size();
-        int numberOfSpecies = mExtractor.getSpecies().size();
-        int numberOfCols = numberOfAreas * bioVariables.size() * 12;
+        int numberOfSpecies = mammals.size();
+        int numberOfCols = numberOfAreas * bioVariables.size() * 12 + numberOfAreas;
+        System.out.println(numberOfCols);
+        System.out.println(numberOfAreas);
         byte[][] finalMatrix = new byte[numberOfSpecies][numberOfCols];
         Set<String> missinAreas = new HashSet<>();
 
@@ -45,9 +47,10 @@ public class Main {
 
         ArrayList<String> mammalAreas = new ArrayList<>(mammalsMap.keySet());
         long starttime = System.nanoTime();
-        System.out.println("List of Mammals startDownload");
-        List<Mammal> mammals = mExtractor.getMammalsPresence();
-        /*
+
+
+        System.out.println(mammals.size());
+
         System.out.println("List of Mammals downloaded");
         for (int i = 0; i < mammals.size(); i++) {
 
@@ -74,8 +77,8 @@ public class Main {
 
         }
         long endtime = System.nanoTime();
-        System.out.println((endtime- starttime) / 1000000);
-/*
+
+
         File finalMatrixFile = new File("world2/matrix.txt");
         finalMatrixFile.createNewFile();
         FileOutputStream fout = new FileOutputStream(finalMatrixFile);
@@ -86,10 +89,11 @@ public class Main {
                 fout.write(String.valueOf(finalMatrix[i][j]).getBytes());
             }
             fout.write(System.getProperty("line.separator").getBytes());
+            System.out.println(i + " row writed");
         }
 
         fout.close();
-*/
+        System.out.println((endtime- starttime) / 1000000);
 
 
         //System.out.println("Coordinates of area 29UPR4 " + Arrays.toString(biggerPoly));

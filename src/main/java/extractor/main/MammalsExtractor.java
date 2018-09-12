@@ -109,7 +109,7 @@ public class MammalsExtractor {
             }
 
         }
-        System.out.println(mammalName);
+        //System.out.println(mammalName);
         return new Mammal(mammalName, preLocations, postLocations);
     }
 
@@ -129,7 +129,7 @@ public class MammalsExtractor {
     }
 
     private List<Mammal> getMammalsFromXml(String path){
-
+        List<Mammal> mammalList = new ArrayList<>();
         try{
             File xmlFile = new File(path);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -137,15 +137,19 @@ public class MammalsExtractor {
             Document doc = dBuilder.parse(xmlFile);
             doc.getDocumentElement().normalize();
             NodeList mammalNodeList = doc.getElementsByTagName("Mammal");
-            List<Mammal> mammalList = new ArrayList<>();
+
             
 
             for(int i = 0; i < mammalNodeList.getLength(); i++){
-                NodeList mammalAtritubes = mammalNodeList.item(i).getChildNodes();
-                NodeList preLocations = mammalAtritubes.item(3).getChildNodes();
-                NodeList posLocations = mammalAtritubes.item(5).getChildNodes();
 
-                String mammalName = mammalAtritubes.item(1).getTextContent();
+                NodeList mammalAtritubes = mammalNodeList.item(i).getChildNodes();
+               //
+                NodeList preLocations = mammalAtritubes.item(1).getChildNodes();
+
+
+                NodeList posLocations = mammalAtritubes.item(2).getChildNodes();
+
+                String mammalName = mammalAtritubes.item(0).getTextContent();
                 List<String> preLocationsFinal = new ArrayList<>();
                 List<String> posLocationsFinal = new ArrayList<>();
 
@@ -166,7 +170,7 @@ public class MammalsExtractor {
                     posLocationsFinal.add(childNode.getTextContent());
                 }
                 mammalList.add(new Mammal(mammalName,preLocationsFinal,posLocationsFinal));
-                
+
             }
 
         } catch (ParserConfigurationException e) {
@@ -176,7 +180,8 @@ public class MammalsExtractor {
         } catch (SAXException e) {
             e.printStackTrace();
         }
-        return new ArrayList<Mammal>();
+        return mammalList;
+
 
     }
 

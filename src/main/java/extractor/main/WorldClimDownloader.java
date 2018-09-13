@@ -15,6 +15,8 @@ import java.util.zip.ZipInputStream;
 
 public class WorldClimDownloader {
 
+    private ArrayList<String> downloadedVariables = new ArrayList<>();
+
     public WorldClimDownloader(){
         try {
             File downloadConfig = new File("downloadConfig/worldClim2/downloadLinks.TXT");
@@ -24,7 +26,7 @@ public class WorldClimDownloader {
                 String url = s.substring(0,s.indexOf(" "));
                 String path = s.substring(s.indexOf("=") + 2);
                 File folder = new File(path.substring(0,path.indexOf(".zip") -5));
-
+                downloadedVariables.add(folder.getName());
                 if(!(folder.exists() && folder.list().length == 13)){
                     downloadFile(url,path);
                 }
@@ -92,5 +94,9 @@ public class WorldClimDownloader {
         }catch (IOException ioe){
             ioe.printStackTrace();
         }
+    }
+
+    public ArrayList<String> getDownloadedVariables() {
+        return downloadedVariables;
     }
 }

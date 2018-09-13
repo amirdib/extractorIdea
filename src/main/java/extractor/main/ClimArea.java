@@ -2,11 +2,11 @@ package extractor.main;
 
 public class ClimArea extends Area {
 
-    private double value;
+    private double[] values;
 
-    public ClimArea(double[] coors, double value) {
+    public ClimArea(double[] coors, double[] values) {
         super(coors);
-        this.value = value;
+        this.values = values;
 
     }
 

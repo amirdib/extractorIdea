@@ -15,7 +15,7 @@ import java.util.zip.ZipInputStream;
 
 public class WorldClimDownloader {
 
-    private ArrayList<String> downloadedVariables = new ArrayList<>();
+    private List<String> downloadedVariables = new ArrayList<>();
 
     public WorldClimDownloader(){
         try {
@@ -96,7 +96,7 @@ public class WorldClimDownloader {
         }
     }
 
-    public ArrayList<String> getDownloadedVariables() {
+    public List<String> getDownloadedVariables() {
         return downloadedVariables;
     }
 }

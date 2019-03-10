@@ -31,8 +31,8 @@ public class GeoTiff {
         int widthExt = width + 4;
         int heightExt = height + 4;
         values = new double[widthExt][heightExt];
-        int x = 0;
-        int y = 0;
+        int x;
+        int y;
 
         for(int i = 0; i < widthExt; i++) {
             for(int j = 0; j < heightExt; j++) {
@@ -67,6 +67,7 @@ public class GeoTiff {
                 xScale = Double.valueOf(scales[0].trim());
                 yScale = Double.valueOf(scales[1].trim());
 
+
             }else if(fileE.getFieldTag().toString().equals("ModelTiepoint")) {
                 // get Longitude, Latitude start positions
                 String[] tiePointCoors = fileE.getValues().toString().replace("[","").replace("]", "").split(",");
@@ -78,7 +79,7 @@ public class GeoTiff {
 
     }
 
-    public Location getPxLocation(int x, int y) {
+    private Location getPxLocation(int x, int y) {
         double[] loc1Coors = pixelToCoors(x, y);
         return new Location(loc1Coors[0],loc1Coors[1]);
     }
@@ -138,8 +139,7 @@ public class GeoTiff {
     }
 
     // returns ale GPS coordinates bound pixel
-
-    public Area getPixelBoundaries(int x, int y) {
+    private Area getPixelBoundaries(int x, int y) {
 
         double[] boundaries = new double[10];
         int k = 0;

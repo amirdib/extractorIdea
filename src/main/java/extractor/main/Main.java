@@ -3,96 +3,77 @@ package extractor.main;
 
 import java.io.IOException;
 
+import java.net.URISyntaxException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.net.URL;
 import java.nio.channels.*;
 
 import java.io.*;
 
+import extractor.main.factorFinder.FCF;
 import org.apache.commons.io.FileUtils;
 
 import javax.xml.bind.JAXBException;
 
+import static extractor.main.factorFinder.extractorAlgoFinal.*;
+
+
 
 public class Main {
 
-    public static void main( String[] args ) throws IOException {
+    public static byte[][] matrix = {
+            {1,0,1,0,1,1},
+            {0,0,1,0,0,0},
+            {1,1,0,1,1,1},
+            {0,0,1,0,0,1},
+            {0,1,1,1,0,1}};
+
+    public static void main( String[] args ) throws IOException, URISyntaxException {
 
 
 
         // HashMap stores data from european mammals, cgrs cells with coors
-        GeoTiff avgTempJan = new GeoTiff("world2/tavg/wc2.0_10m_tavg_01.tif");
+        //GeoTiff avgTempJan = new GeoTiff("world2/tavg/wc2.0_10m_tavg_01.tif");
 
 
         MammalsMapExtractor mMapExtractor = new MammalsMapExtractor();
         MammalsExtractor mExtractor = new MammalsExtractor();
-
-
-
-        HashMap<String, double[]> mammalsMap = mMapExtractor.getAreas();
-        //List<Mammal> mammals = mExtractor.getMammalsPresence();
-
-
-
         WorldClimDownloader worldClimDownloader = new WorldClimDownloader();
 
+        Instant start = Instant.now();
+
+        //ArrayList<String> mammalsAreas = new ArrayList<>(mammalsMap.keySet());
+        ArrayList<Mammal> mammals = new ArrayList<>(mExtractor.getMammalsPresence());// List of objects of mammals 489
+        ArrayList<String> bioVariables = new ArrayList<>(worldClimDownloader.getDownloadedVariables()); // list of biovariables //7
+        HashMap<String, double[]> mammalsMap = mMapExtractor.getAreas(); // Keys = id for location, double[] = coordinates // 4656
+
+        DesirableMatrix2 desMatrix = new DesirableMatrix2(mammals,mammalsMap,bioVariables);
+
+
+        boolean[][] denseMatrix = desMatrix.getDenseMatrix();
+
+
+        System.gc();
+        System.out.println("dONE");
         /*
-        String template = "world2/TYPE/wc2.0_10m_TYPE_MONTH.tif";
+        FCF conceptFinder = new FCF(transposeMatrix(denseMatrix));
+        writeToFile(conceptFinder.getContext());
+        */
 
-        for(String bVar : bioVariables){
-            String pathToTif = template.replace("TYPE", bVar);
+        Instant finish = Instant.now();
+        long timeElapsed = Duration.between(start, finish).toMillis();
+        System.out.println("Time " + timeElapsed);
 
-            for (int i = 1; i <= 12; i++){
-                String month = String.valueOf(i);
-                if(i < 10)
-                {
-                    month = "0" + month;
-                }
-                pathToTif = pathToTif.replace("MONTH", month);
+        System.out.println("Rows " + denseMatrix.length);
+        System.out.println("Cols " + denseMatrix[1].length);
 
-                GeoTiff climVarThMonth = new GeoTiff(pathToTif);
-                ArrayList<Double> climVariables = new ArrayList<>();
+        boolean[][] transposedMatrix = transposeMatrix(denseMatrix);
 
-                for(double[] d : mammalsMap.values())
-                {
-                    climVariables.add(climVarThMonth.getAvgFromNeighborhood(new Area(d),2));
-                }
+        System.out.println("Rows " + transposedMatrix.length);
+        System.out.println("Cols " + transposedMatrix[1].length);
 
-
-            }
-
-
-        }
-    */
-
-
-
-        ArrayList<String> mammalsAreas = new ArrayList<>(mammalsMap.keySet());
-        ArrayList<Mammal> mammals = new ArrayList<>(mExtractor.getMammalsPresence());
-        ArrayList<String> bioVariables = new ArrayList<>(worldClimDownloader.getDownloadedVariables());
-        DesirableMatrix desMatrix = new DesirableMatrix(mammals,mammalsAreas,bioVariables);
-
-        System.out.println(mammals.get(0));
-        //System.out.println(desMatrix.getRowsIndices().lastIndexOf(0));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //System.out.println("Coordinates of area 29UPR4 " + Arrays.toString(biggerPoly));
-        //System.out.println(avgTempJan.getAvgFromNeighborhood(mArea, 2));
-        //System.out.println(avgTempJan.getPxValue(1041, 240));
 
 
 

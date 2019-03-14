@@ -13,6 +13,7 @@ import java.nio.channels.*;
 import java.io.*;
 
 import extractor.main.factorFinder.FCF;
+import extractor.main.factorFinder.FactorAnalyser;
 import org.apache.commons.io.FileUtils;
 
 import javax.xml.bind.JAXBException;
@@ -36,8 +37,11 @@ public class Main {
 
         // HashMap stores data from european mammals, cgrs cells with coors
         //GeoTiff avgTempJan = new GeoTiff("world2/tavg/wc2.0_10m_tavg_01.tif");
+        FactorAnalyser fa = new FactorAnalyser("newfile.txt");
+        //System.out.println(fa.countFactors());
+        fa.transForm();
 
-
+        /* //Pro tvorbu matice odkomentovat
         MammalsMapExtractor mMapExtractor = new MammalsMapExtractor();
         MammalsExtractor mExtractor = new MammalsExtractor();
         WorldClimDownloader worldClimDownloader = new WorldClimDownloader();
@@ -57,11 +61,13 @@ public class Main {
 
         System.gc();
         System.out.println("dONE");
+
         /*
         FCF conceptFinder = new FCF(transposeMatrix(denseMatrix));
         writeToFile(conceptFinder.getContext());
         */
 
+        /* Uz nepotrbne
         Instant finish = Instant.now();
         long timeElapsed = Duration.between(start, finish).toMillis();
         System.out.println("Time " + timeElapsed);
@@ -73,6 +79,7 @@ public class Main {
 
         System.out.println("Rows " + transposedMatrix.length);
         System.out.println("Cols " + transposedMatrix[1].length);
+        */
 
 
 

@@ -97,28 +97,30 @@ public class DesirableMatrix2 {
         System.out.println("CountInGet" + count);
         return finalMatrix;
     }
-
+    //finally correct
     private List<String> processColsHeader(){
         ArrayList<String> climVariables = new ArrayList<>();
         try {
             String template = "world2/TYPE/wc2.0_10m_TYPE_MONTH.tif";
 
-            for(String s : mammalAreas){
-                climVariables.add(s);
-            }
+            climVariables.addAll(mammalAreas);
 
             for(String bVar : bioVariables){
-                String pathToTif = template.replace("TYPE", bVar);
+
 
                 for (int i = 1; i <= 12; i++){
-                    String month = String.valueOf(i);
+                    String month = "";
                     if(i < 10)
                     {
-                        month = "0" + month;
+                        month = "0" + i;
                     }
-                    pathToTif = pathToTif.replace("MONTH", month);
+                    else{
+                        month = String.valueOf(i);
+                    }
+                    String pathToTif = template.replace("TYPE", bVar).replace("MONTH", month);
 
                     GeoTiff climVarThMonth = new GeoTiff(pathToTif);
+                    System.out.println(pathToTif);
 
 
                     for(double[] d : mammalsMap.values())

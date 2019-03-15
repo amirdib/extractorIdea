@@ -41,33 +41,15 @@ public class MammalsExtractor {
         this.urlToMap = "https://www.european-mammals.org/php/rendermap.php?latname=";
         this.urlToSpecies = "https://www.european-mammals.org/php/mapmaker.php";
 
-        //System.out.println(getMammalsPresence());
-        //;
-
     }
 
-    private String downloadWebPage(String targetURL) {
-        StringBuilder pageBuilder = new StringBuilder();
-        try {
-            URL url = new URL(targetURL);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            //BufferedWriter writer = new BufferedWriter(new FileWriter("data.html"));
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                pageBuilder.append(line);
-            }
-            reader.close();
-
-        }catch(Exception e1) {
-            System.out.println("nepovedlo se");
-        }
-
-        return pageBuilder.toString();
-    }
-
-    public List<String> getSpecies() {
-        StringBuilder strBuilder = new StringBuilder(downloadWebPage(this.urlToSpecies));
+    /**
+     * Gets all species of mammals available at EMMA
+     * @return - List of all mammals
+     */
+    private List<String> getSpecies() {
+        WebPageDownloader webDwn = new WebPageDownloader(this.urlToSpecies);
+        StringBuilder strBuilder = new StringBuilder(webDwn.download());
         String startTag = "<OPTION >";
         String endTag = "</OPTION>";
         int startIndex;
@@ -75,18 +57,24 @@ public class MammalsExtractor {
         List<String> species = new ArrayList<>();
 
         while(strBuilder.indexOf(startTag) != -1) {
-            startIndex = strBuilder.indexOf(startTag) + 9;
+            startIndex = strBuilder.indexOf(startTag) + startTag.length();
             endIndex = strBuilder.indexOf(endTag);
             species.add(strBuilder.substring(startIndex, endIndex).replace(" ", "+"));
-            strBuilder.delete(0,endIndex + 9);
+            strBuilder.delete(0,endIndex + endTag.length());
 
         }
         return species;
     }
 
+    /**
+     * Finds positions of concrete mammal
+     * @param mammalName - latin name of given mammal
+     * @return Mammal, object where name and ids of presence locations are stored
+     */
     private Mammal extractMammal(String mammalName) {
         // extraction datapoints from HTML
-        StringBuilder strBuilder = new StringBuilder(downloadWebPage(this.urlToMap + mammalName));
+        WebPageDownloader webDwn = new WebPageDownloader(this.urlToMap + mammalName);
+        StringBuilder strBuilder = new StringBuilder(webDwn.download());
         List<String> postLocations = new ArrayList<>();
         List<String> preLocations = new ArrayList<>();
         strBuilder.delete(0, strBuilder.indexOf("datapoints"));
@@ -95,11 +83,8 @@ public class MammalsExtractor {
 
         //parse dataPoints
         while(strBuilder.indexOf("id") != -1) {
-
-            String id;
-            String phase;
-            id = strBuilder.substring(strBuilder.indexOf("id")+6,strBuilder.indexOf("x")-2);
-            phase = strBuilder.substring(strBuilder.indexOf("#"),strBuilder.indexOf("/>"));
+            String id = strBuilder.substring(strBuilder.indexOf("id")+6,strBuilder.indexOf("x")-2);
+            String phase = strBuilder.substring(strBuilder.indexOf("#"),strBuilder.indexOf("/>"));
             strBuilder.delete(0, strBuilder.indexOf("/>")+2);
 
             if(phase.contains("post")) {
@@ -109,10 +94,14 @@ public class MammalsExtractor {
             }
 
         }
-        //System.out.println(mammalName);
+
         return new Mammal(mammalName, preLocations, postLocations);
     }
 
+    /**
+     * Extract and return all Mammals and theirs presence
+     * @return - List of Mammals objects - contains names and places
+     */
     public List<Mammal> getMammalsPresence() {
         String path = "mammals/mammals.xml";
         File mammalsXmlStorage = new File(path);
@@ -128,6 +117,11 @@ public class MammalsExtractor {
         }
     }
 
+    /**
+     * Get mammals from local xml
+     * @param path - path to local xml where info about mammals are stored
+     * @return - list of Mammal objects
+     */
     private List<Mammal> getMammalsFromXml(String path){
         List<Mammal> mammalList = new ArrayList<>();
         try{
@@ -138,46 +132,34 @@ public class MammalsExtractor {
             doc.getDocumentElement().normalize();
             NodeList mammalNodeList = doc.getElementsByTagName("Mammal");
 
-            
-
             for(int i = 0; i < mammalNodeList.getLength(); i++){
 
                 NodeList mammalAtritubes = mammalNodeList.item(i).getChildNodes();
-               //
                 NodeList preLocations = mammalAtritubes.item(1).getChildNodes();
-
-
                 NodeList posLocations = mammalAtritubes.item(2).getChildNodes();
-
                 String mammalName = mammalAtritubes.item(0).getTextContent();
+
                 List<String> preLocationsFinal = new ArrayList<>();
                 List<String> posLocationsFinal = new ArrayList<>();
 
                 for (int k = 0; k < preLocations.getLength(); k++) {
                     Node childNode = preLocations.item(k);
-
-                    if (childNode.getNodeType() != Node.ELEMENT_NODE) {
-                        continue;
+                    if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+                        preLocationsFinal.add(childNode.getTextContent());
                     }
-                    preLocationsFinal.add(childNode.getTextContent());
                 }
+
                 for (int j = 0; j < posLocations.getLength(); j++) {
                     Node childNode = posLocations.item(j);
-
-                    if (childNode.getNodeType() != Node.ELEMENT_NODE) {
-                        continue;
+                    if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+                        posLocationsFinal.add(childNode.getTextContent());
                     }
-                    posLocationsFinal.add(childNode.getTextContent());
                 }
-                mammalList.add(new Mammal(mammalName,preLocationsFinal,posLocationsFinal));
 
+                mammalList.add(new Mammal(mammalName,preLocationsFinal,posLocationsFinal));
             }
 
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
         }
         return mammalList;
@@ -185,6 +167,11 @@ public class MammalsExtractor {
 
     }
 
+    /**
+     * Save mammals into xml file
+     * @param mammals - List of mammals
+     * @param path - where to place xml
+     */
     private void mammalsToXml(List<Mammal> mammals, String path) {
         try {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -224,20 +211,12 @@ public class MammalsExtractor {
 
             }
 
-            // transforms xml doc to string
             TransformerFactory tf = TransformerFactory.newInstance();
             StringWriter writer = new StringWriter();
             Transformer transformer = tf.newTransformer();
             transformer.transform( new DOMSource( doc ), new StreamResult( writer ) );
-            //personXMLStringValue = writer.getBuffer().toString();
             Files.write(Paths.get(path), writer.getBuffer().toString().getBytes());
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (TransformerException | ParserConfigurationException | IOException e) {
             e.printStackTrace();
         }
 

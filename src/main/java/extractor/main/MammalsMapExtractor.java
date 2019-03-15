@@ -22,66 +22,81 @@ import org.json.JSONObject;
 
 public class MammalsMapExtractor {
 
-    private String url = "https://www.european-mammals.org/osm/EMMA2grid.php";
-    private String storageFileFullName = "mammals/CGRSJSON.txt";
+
+
     private JSONObject cgrsJson;
 
     public MammalsMapExtractor()  {
 
-        File file = new File(storageFileFullName);
+        String url = "https://www.european-mammals.org/osm/EMMA2grid.php";
+        File file = new File("mammals/CGRSJSON.txt");
 
-        try {
+
             if(file.exists()) {
                 cgrsJson = readJSONFromFile(file.getPath());
-
             }else {
                 cgrsJson = readJSONFromUrl(url);
-                writeJSONToFile(cgrsJson,file.getPath());
+                writeJSONToFile(cgrsJson, file.getPath());
             }
-        }catch(IOException e1) {
-            System.out.println("IO Error");
-        }catch(JSONException e2) {
-            System.out.println("JSON Error");
-        }
     }
 
-
-
+    /**
+     * Read storaged JSON from EMMA website
+     * @param url - url to EMMA2grid where coordinates to polygons are stored
+     * @return - JSON Object  with ids and coordinates of polygons in the map
+     */
     private JSONObject readJSONFromUrl(String url){
-        JSONObject json = new JSONObject();
+
         try {
             InputStream is= new URL(url).openStream();
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = rd.lines().collect(Collectors.joining());
-            json = new JSONObject(jsonText);
             is.close();
+            return new JSONObject(jsonText);
         } catch(Exception e) {
-
+            e.printStackTrace();
+            return new JSONObject("");
         }
-        return json;
     }
 
+    /**
+     * Saves JSON to disk
+     * @param obj - JSONObject to storage persist on disk
+     * @param path - write path
+     */
     private void writeJSONToFile(JSONObject obj, String path) {
 
         try (FileWriter file = new FileWriter(path)) {
             file.write(obj.toString());
-
-
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            System.out.println("File saving error");
         }
     }
 
-    private JSONObject readJSONFromFile(String url) throws FileNotFoundException {
-
-        BufferedReader rd = new BufferedReader(new FileReader(url));
-        String jsonText = rd.lines().collect(Collectors.joining());
-        JSONObject json = new JSONObject(jsonText);
-        return json;
+    /**
+     * Read storaged JSON from file
+     * @param path - path to JSON File
+     * @return ids and coordinates of polygons in the map
+     */
+    private JSONObject readJSONFromFile(String path) {
+        try {
+            BufferedReader rd = new BufferedReader(new FileReader(path));
+            String jsonText = rd.lines().collect(Collectors.joining());
+            return new JSONObject(jsonText);
+        }catch(FileNotFoundException fnf){
+            fnf.printStackTrace();
+            return new JSONObject("");
+        }
     }
 
-    public  HashMap<String, double[]> getAreas() throws JSONException, IOException{
+    /**
+     * Transfer JSON with areas to HashMap
+     * key - CGRSName of area(polygon)
+     * value - Coordinates
+     * @return HashMap mentioned above
+     */
+    public HashMap<String, double[]> getAreas() {
 
         JSONArray jsonArray = new JSONArray(cgrsJson.get("features").toString());
         HashMap<String,double[]> cgrsCoordinates = new HashMap<>();
@@ -104,12 +119,6 @@ public class MammalsMapExtractor {
             cgrsCoordinates.put(properties.getString("CGRSName"), doubleCoors);
 
         }
-
         return cgrsCoordinates;
-
     }
-
-
-
-
 }

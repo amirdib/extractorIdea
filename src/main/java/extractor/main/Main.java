@@ -24,27 +24,25 @@ import static extractor.main.factorFinder.extractorAlgoFinal.*;
 
 public class Main {
 
-    public static byte[][] matrix = {
-            {1,0,1,0,1,1},
-            {0,0,1,0,0,0},
-            {1,1,0,1,1,1},
-            {0,0,1,0,0,1},
-            {0,1,1,1,0,1}};
 
-    public static void main( String[] args ) throws IOException, URISyntaxException {
+
+    public static void main( String[] args ) {
 
 
 
         // HashMap stores data from european mammals, cgrs cells with coors
         //GeoTiff avgTempJan = new GeoTiff("world2/tavg/wc2.0_10m_tavg_01.tif");
-        FactorAnalyser fa = new FactorAnalyser("newfile.txt");
+        //FactorAnalyser fa = new FactorAnalyser("newfile.txt");
         //System.out.println(fa.countFactors());
-        fa.transForm();
+        //fa.transForm();
 
-        /* //Pro tvorbu matice odkomentovat
+         //Pro tvorbu matice odkomentovat
+        //Stahne a ulozi udaje o mapě na které se nachází savci
         MammalsMapExtractor mMapExtractor = new MammalsMapExtractor();
+
         MammalsExtractor mExtractor = new MammalsExtractor();
         WorldClimDownloader worldClimDownloader = new WorldClimDownloader();
+        worldClimDownloader.downLoadAll();
 
         Instant start = Instant.now();
 
@@ -80,10 +78,5 @@ public class Main {
         System.out.println("Rows " + transposedMatrix.length);
         System.out.println("Cols " + transposedMatrix[1].length);
         */
-
-
-
-
-
     }
 }

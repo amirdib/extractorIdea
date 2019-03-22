@@ -26,7 +26,7 @@ public class Main {
 
 
 
-    public static void main( String[] args ) {
+    public static void main( String[] args ) throws IOException {
 
 
 
@@ -35,19 +35,22 @@ public class Main {
         //FactorAnalyser fa = new FactorAnalyser("newfile.txt");
         //System.out.println(fa.countFactors());
         //fa.transForm();
+        ;
 
          //Pro tvorbu matice odkomentovat
         //Stahne a ulozi udaje o mapě na které se nachází savci
-        MammalsMapExtractor mMapExtractor = new MammalsMapExtractor();
+        MammalsMapExtractor mMapExtractor = new MammalsMapExtractor(); // optimalized
 
-        MammalsExtractor mExtractor = new MammalsExtractor();
-        WorldClimDownloader worldClimDownloader = new WorldClimDownloader();
+        MammalsExtractor mExtractor = new MammalsExtractor(); // optimalized
+        WorldClimDownloader worldClimDownloader = new WorldClimDownloader(); // optimalized
         worldClimDownloader.downLoadAll();
 
-        Instant start = Instant.now();
+
 
         //ArrayList<String> mammalsAreas = new ArrayList<>(mammalsMap.keySet());
         ArrayList<Mammal> mammals = new ArrayList<>(mExtractor.getMammalsPresence());// List of objects of mammals 489
+
+
         ArrayList<String> bioVariables = new ArrayList<>(worldClimDownloader.getDownloadedVariables()); // list of biovariables //7
         HashMap<String, double[]> mammalsMap = mMapExtractor.getAreas(); // Keys = id for location, double[] = coordinates // 4656
 

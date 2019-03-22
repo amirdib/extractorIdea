@@ -34,10 +34,9 @@ public class GeoTiff {
         int x;
         int y;
 
+        // extented borders +4 for future operations
         for(int i = 0; i < widthExt; i++) {
             for(int j = 0; j < heightExt; j++) {
-
-                //values[i+2][j+2] = rasters.getPixel(i, j)[0].floatValue();
 
                 if(i > 1 && i < widthExt - 2){
                     x = i - 2;
@@ -63,14 +62,16 @@ public class GeoTiff {
             if(fileE.getFieldTag().toString().equals("ModelPixelScale")) {
 
                 // get values of x y Scale
-                String[] scales = fileE.getValues().toString().replace("[","").replace("]", "").split(",");
+                String[] scales = fileE.getValues().toString()
+                        .replaceAll("[\\[|\\]]","").split(",");
                 xScale = Double.valueOf(scales[0].trim());
                 yScale = Double.valueOf(scales[1].trim());
 
 
             }else if(fileE.getFieldTag().toString().equals("ModelTiepoint")) {
                 // get Longitude, Latitude start positions
-                String[] tiePointCoors = fileE.getValues().toString().replace("[","").replace("]", "").split(",");
+                String[] tiePointCoors = fileE.getValues().toString()
+                        .replaceAll("[\\[|\\]]","").split(",");
                 lonStart = Double.valueOf(tiePointCoors[3].trim());
                 latStart = Double.valueOf(tiePointCoors[4].trim());
 
@@ -88,7 +89,7 @@ public class GeoTiff {
         return values[x+2][y+2];
     }
 
-    public  double[] pixelToCoors(int x, int y) {
+    private double[] pixelToCoors(int x, int y) {
 
         double[] coors = new double[2];
         coors[0] = lonStart + x * xScale;
@@ -107,7 +108,7 @@ public class GeoTiff {
 
     }
 
-    public double getAvgFromNeighborhood(Area refPoly, int radius) 	{
+    double getAvgFromNeighborhood(Area refPoly, int radius) 	{
         int size = (radius * 2) + 1;
         int point[] = coorsToPixel(refPoly.getMiddleCoordinate());
         double[] coverages = new double[size * size];
@@ -143,8 +144,6 @@ public class GeoTiff {
 
         double[] boundaries = new double[10];
         int k = 0;
-        double tempX = 0;
-        double tempY = 0;
 
         for(int i = 0; i <= 1; i++) {
             for(int j = 0; j <= 1; j++) {
@@ -155,7 +154,8 @@ public class GeoTiff {
             }
         }
         // make polygon points in counter-clock order
-
+        double tempX;
+        double tempY;
         tempX = boundaries[0];
         boundaries[0] = boundaries[2];
         boundaries[2] = tempX;

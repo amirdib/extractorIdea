@@ -30,6 +30,7 @@ public class WebPageDownloader {
 
         }catch(Exception e1) {
             System.out.println("nepovedlo se");
+            e1.printStackTrace();
         }
 
         return pageBuilder.toString();

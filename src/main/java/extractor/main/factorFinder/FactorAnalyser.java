@@ -57,6 +57,7 @@ public class FactorAnalyser {
         StringBuilder extentIntent = new StringBuilder("");
         List<String> extentsIndices = new ArrayList<>();
         List<String> intentsIndices = new ArrayList<>();
+        System.out.println(rowHeaders.size());
 
         int i;
         while ((i=fr.read()) != -1) {
@@ -120,6 +121,7 @@ public class FactorAnalyser {
                 }
             }
         }
+
         for( int i: integers){
             stringAfter.append(headers.get(i)).append(", ");
         }

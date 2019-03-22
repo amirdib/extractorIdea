@@ -63,7 +63,7 @@ public class MammalsExtractor {
             strBuilder.delete(0,endIndex + endTag.length());
 
         }
-        return species;
+        return species.stream().distinct().collect(Collectors.toList());
     }
 
     /**

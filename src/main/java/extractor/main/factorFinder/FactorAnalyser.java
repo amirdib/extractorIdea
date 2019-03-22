@@ -90,6 +90,8 @@ public class FactorAnalyser {
             extentIntent.append(System.getProperty("line.separator"));
             extentIntent.append("<[").append(trueValues(intentsIndices.get(j),rowHeaders)).append("],");
             extentIntent.append(System.getProperty("line.separator"));
+            extentIntent.append(averages(extentsIndices.get(j),colHeaders));
+            extentIntent.append(System.getProperty("line.separator"));
             extentIntent.append("[").append(formatCols(extentsIndices.get(j),colHeaders)).append("]>");
             extentIntent.append(System.getProperty("line.separator"));
             extentIntent.append(System.getProperty("line.separator"));
@@ -163,6 +165,91 @@ public class FactorAnalyser {
         }
 
 
+        return stringAfter.toString();
+    }
+
+    private String averages(String stringArray, List<String> headers){
+        String[] stringsBefore = stringArray.replaceAll("[^\\d]", " " ).split(" ");
+        List<Integer> integers = new ArrayList<>();
+        StringBuilder stringAfter = new StringBuilder("");
+        for(String s : stringsBefore){
+            if(!s.contains(" ")){
+                if(!s.equals("") && (Integer.valueOf(s) < 4656)){
+                    integers.add(Integer.valueOf(s));
+                }
+            }
+        }
+        String[] climVariables = {"tmin: "," tmax: "," tavg: "," prec: "," srad: "," wind: "," vapr: "};
+        Float[] averagesOver = new Float[climVariables.length];
+        Float[] minsOver = new Float[climVariables.length];
+        Float[] maxsOver = new Float[climVariables.length];
+
+        for(int i = 0; i < averagesOver.length; i++){
+            averagesOver[i] = 0f;
+            minsOver[i] = Float.MAX_VALUE;
+            maxsOver[i] = Float.MIN_VALUE;
+        }
+
+        Float[] averagesMonth = new Float[climVariables.length * 12];
+        Float[] minsMonth = new Float[climVariables.length * 12];
+        Float[] maxsMonth = new Float[climVariables.length * 12];
+
+        for(int i = 0; i < climVariables.length*12; i++){
+            averagesMonth[i] = 0f;
+            minsMonth[i] = Float.MAX_VALUE;
+            maxsMonth[i] = Float.MIN_VALUE;
+        }
+
+        int countVariables = 0;
+
+        for( int i: integers){
+            for(int j = 1; j <=7*12;j++){
+                if(j % 13 ==0){
+                    countVariables++;
+
+                }
+                averagesMonth[j-1] = averagesMonth[j-1] + Float.valueOf(headers.get(i + (j*4656)));
+                minsMonth[j-1] = Float.min(minsMonth[j-1], Float.valueOf(headers.get(i + (j*4656))));
+                maxsMonth[j-1] = Float.max(maxsMonth[j-1], Float.valueOf(headers.get(i + (j*4656))));
+                averagesOver[countVariables] = averagesOver[countVariables] + Float.valueOf(headers.get(i + (j*4656)));
+                minsOver[countVariables] = Float.min(minsOver[countVariables], Float.valueOf(headers.get(i + (j*4656))));
+                maxsOver[countVariables] = Float.max(maxsOver[countVariables], Float.valueOf(headers.get(i + (j*4656))));
+
+
+            }
+            countVariables = 0;
+        }
+        countVariables = 0;
+        stringAfter.append("By month");
+        stringAfter.append(System.getProperty("line.separator"));
+        for(int i = 0; i < climVariables.length*12;i++){
+            if(i % 12 ==0){
+                stringAfter.append(climVariables[countVariables]);
+                countVariables++;
+            }
+            DecimalFormat df2 = new DecimalFormat("#.##");
+            df2.setRoundingMode(RoundingMode.CEILING);
+            stringAfter.append(df2.format(minsMonth[i]));
+            stringAfter.append(" ");
+        }
+        stringAfter.append(System.getProperty("line.separator"));
+
+        stringAfter.append("Averages ");
+        for(int i = 0; i < averagesOver.length; i++){
+            averagesOver[i] = averagesOver[i] / (integers.size()*12);
+            stringAfter.append(climVariables[i]).append(averagesOver[i]);
+        }
+        stringAfter.append(System.getProperty("line.separator"));
+        stringAfter.append("Mins ");
+        for(int i = 0; i < maxsOver.length; i++){
+            stringAfter.append(climVariables[i]).append(minsOver[i]);
+        }
+        stringAfter.append(System.getProperty("line.separator"));
+        stringAfter.append("Maxs ");
+        for(int i = 0; i < minsOver.length; i++){
+            stringAfter.append(climVariables[i]).append(maxsOver[i]);
+        }
+        stringAfter.append(System.getProperty("line.separator"));
         return stringAfter.toString();
     }
 

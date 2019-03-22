@@ -32,11 +32,11 @@ public class Main {
 
         // HashMap stores data from european mammals, cgrs cells with coors
         //GeoTiff avgTempJan = new GeoTiff("world2/tavg/wc2.0_10m_tavg_01.tif");
-        //FactorAnalyser fa = new FactorAnalyser("newfile.txt");
+        FactorAnalyser fa = new FactorAnalyser("newfile.txt");
         //System.out.println(fa.countFactors());
-        //fa.transForm();
+        fa.transForm();
         ;
-
+/*
          //Pro tvorbu matice odkomentovat
         //Stahne a ulozi udaje o mapě na které se nachází savci
         MammalsMapExtractor mMapExtractor = new MammalsMapExtractor(); // optimalized
@@ -48,7 +48,7 @@ public class Main {
 
 
         //ArrayList<String> mammalsAreas = new ArrayList<>(mammalsMap.keySet());
-        ArrayList<Mammal> mammals = new ArrayList<>(mExtractor.getMammalsPresence());// List of objects of mammals 489
+        ArrayList<Mammal> mammals = new ArrayList<>(mExtractor.getMammalsPresence());// List of objects of mammals 245
 
 
         ArrayList<String> bioVariables = new ArrayList<>(worldClimDownloader.getDownloadedVariables()); // list of biovariables //7

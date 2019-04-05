@@ -24,6 +24,24 @@ public class Area {
 
     }
 
+    public Location center(){
+        double totalX = 0;
+        double totalY = 0;
+        double count = GPSCoordinates.length/2f;
+        for(int i = 0; i <GPSCoordinates.length;i++){
+            if(i % 2 == 0){
+                totalX = totalX + GPSCoordinates[i];
+            }else{
+                totalY = totalY + GPSCoordinates[i];
+            }
+        }
+        double[] center = new double[2];
+        center[0] = totalX/(count);
+        center[1] = totalY/(count);
+        return new Location(center[0],center[1]);
+
+    }
+
     public double getArea() {
         double area = 0;
 
@@ -66,7 +84,7 @@ public class Area {
             }
 
             Collections.rotate(result, 1);
-            linesIncident = new ArrayList<double[]>(getLines(result));
+            linesIncident = new ArrayList<>(getLines(result));
             result.clear();
         }
 

@@ -99,15 +99,17 @@ public class DesirableMatrix2 {
     }
     //finally correct
     private List<String> processColsHeader(){
+        double max = Double.MIN_VALUE;
         ArrayList<String> climVariables = new ArrayList<>();
         try {
             String template = "world2/TYPE/wc2.0_10m_TYPE_MONTH.tif";
 
             climVariables.addAll(mammalAreas);
 
+
             for(String bVar : bioVariables){
 
-
+                System.out.println(bVar);
                 for (int i = 1; i <= 12; i++){
                     String month = "";
                     if(i < 10)
@@ -120,16 +122,24 @@ public class DesirableMatrix2 {
                     String pathToTif = template.replace("TYPE", bVar).replace("MONTH", month);
 
                     GeoTiff climVarThMonth = new GeoTiff(pathToTif);
-                    System.out.println(pathToTif);
 
 
-                    for(double[] d : mammalsMap.values())
+
+                    for(String mammalArea : mammalAreas)
                     {
+
+                        /*
+                        if(bVar.equalsIgnoreCase("tavg") && !Double.isNaN(climVarThMonth.getAvgFromNeighborhood(new Area(d),2))){
+                           max = Double.max(max,climVarThMonth.getAvgFromNeighborhood(new Area(d),2));
+                           System.out.println("joo");
+                        }
+                        */
+                        double[] d = mammalsMap.get(mammalArea);
                         climVariables.add(String.valueOf(climVarThMonth.getAvgFromNeighborhood(new Area(d),2)));
                     }
                 }
             }
-
+            //System.out.println(max);
             System.out.println("ClimVariables " + climVariables.size());
             writeHeader(climVariables,colsHeaderFile);
 
@@ -153,14 +163,13 @@ public class DesirableMatrix2 {
         int numberOfCols = numberOfAreas * bioVariables.size() * 12 + numberOfAreas;
 
 
+        for (Mammal mammal : mammals) {
 
-        for (int i = 0; i < numberOfSpecies; i++) {
-
-            for (String l : mammals.get(i).getPostLocations()) {
+            for (String l : mammal.getPostLocations()) {
 
                 // obcas nejake oblasti chybi, chyba na strane mammals db
                 int index = mammalAreas.indexOf(l);
-                if(index == -1){
+                if (index == -1) {
 
                     continue;
                 }
@@ -168,8 +177,8 @@ public class DesirableMatrix2 {
 
                 colsIndices.add(index);
                 index += numberOfAreas;
-                for(int j = 0; j < bioVariables.size(); j++){
-                    for(int k = 0; k < 12; k++){
+                for (int j = 0; j < bioVariables.size(); j++) {
+                    for (int k = 0; k < 12; k++) {
 
                         colsIndices.add(index);
                         index += numberOfAreas;

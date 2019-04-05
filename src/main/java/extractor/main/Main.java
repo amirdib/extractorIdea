@@ -26,7 +26,7 @@ public class Main {
 
 
 
-    public static void main( String[] args ) throws IOException {
+    public static void main( String[] args ) throws IOException, URISyntaxException {
 
 
 
@@ -36,7 +36,30 @@ public class Main {
         //System.out.println(fa.countFactors());
         fa.transForm();
         ;
+        /*
+        int count = 0;
+        float max = Float.MIN_VALUE;
+        float min = Float.MAX_VALUE;
+
+
+        GeoTiff climVarThMonth = new GeoTiff("world2/wind/wc2.0_10m_wind_12.tif");
+        for(int i = 0; i < climVarThMonth.getWidth(); i++){
+            for(int j = 0; j < climVarThMonth.getHeight();j++){
+               max = Float.max(max,climVarThMonth.getPxValue(i,j));
+               min = Float.min(min,climVarThMonth.getPxValue(i,j));
+               //System.out.println(climVarThMonth.getPxValue(i,j));
+
+            }
+        }
+        // prec -32768.0
+        // srad 65535
+        System.out.println(max);
+        System.out.println(min);
+        */
+
+
 /*
+        Instant start = Instant.now();
          //Pro tvorbu matice odkomentovat
         //Stahne a ulozi udaje o mapě na které se nachází savci
         MammalsMapExtractor mMapExtractor = new MammalsMapExtractor(); // optimalized
@@ -56,17 +79,20 @@ public class Main {
 
         DesirableMatrix2 desMatrix = new DesirableMatrix2(mammals,mammalsMap,bioVariables);
 
-
+        /*
         boolean[][] denseMatrix = desMatrix.getDenseMatrix();
 
 
         System.gc();
         System.out.println("dONE");
 
-        /*
+
         FCF conceptFinder = new FCF(transposeMatrix(denseMatrix));
         writeToFile(conceptFinder.getContext());
-        */
+        Instant finish = Instant.now();
+        long timeElapsed = Duration.between(start, finish).toMillis();
+        System.out.println("Time " + timeElapsed);
+
 
         /* Uz nepotrbne
         Instant finish = Instant.now();

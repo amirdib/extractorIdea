@@ -11,11 +11,13 @@ import java.util.stream.*;
 
 public class GeoTiff {
 
-    private double xScale = 0;
-    private double yScale = 0;
-    private double lonStart = 0;
-    private double latStart = 0;
-    private double[][] values;
+    private float xScale = 0;
+    private float yScale = 0;
+    private float lonStart = 0;
+    private float latStart = 0;
+    private float[][] values;
+    private int width;
+    private int height;
 
 
     public GeoTiff(String path) throws IOException {
@@ -26,11 +28,11 @@ public class GeoTiff {
 
         Rasters rasters = fileDirectory.readRasters();
 
-        int width = rasters.getWidth();
-        int height = rasters.getHeight();
+        this.width = rasters.getWidth();
+        this.height = rasters.getHeight();
         int widthExt = width + 4;
         int heightExt = height + 4;
-        values = new double[widthExt][heightExt];
+        values = new float[widthExt][heightExt];
         int x;
         int y;
 
@@ -51,7 +53,7 @@ public class GeoTiff {
                     y = Math.abs(height - Math.abs(j - 2));
                 }
 
-                values[i][j] = rasters.getPixel(x, y)[0].doubleValue();
+                values[i][j] = rasters.getPixel(x, y)[0].floatValue();
 
             }
         }
@@ -64,28 +66,37 @@ public class GeoTiff {
                 // get values of x y Scale
                 String[] scales = fileE.getValues().toString()
                         .replaceAll("[\\[|\\]]","").split(",");
-                xScale = Double.valueOf(scales[0].trim());
-                yScale = Double.valueOf(scales[1].trim());
+                xScale = Float.valueOf(scales[0].trim());
+                yScale = Float.valueOf(scales[1].trim());
 
 
             }else if(fileE.getFieldTag().toString().equals("ModelTiepoint")) {
                 // get Longitude, Latitude start positions
                 String[] tiePointCoors = fileE.getValues().toString()
                         .replaceAll("[\\[|\\]]","").split(",");
-                lonStart = Double.valueOf(tiePointCoors[3].trim());
-                latStart = Double.valueOf(tiePointCoors[4].trim());
+                lonStart = Float.valueOf(tiePointCoors[3].trim());
+                latStart = Float.valueOf(tiePointCoors[4].trim());
 
             }
         }
 
     }
+    public int getWidth(){
+        return this.width;
+    }
+
+    public int getHeight(){
+        return this.height;
+    }
+
+
 
     private Location getPxLocation(int x, int y) {
         double[] loc1Coors = pixelToCoors(x, y);
         return new Location(loc1Coors[0],loc1Coors[1]);
     }
 
-    public double getPxValue(int x, int y) {
+    public float getPxValue(int x, int y) {
         return values[x+2][y+2];
     }
 
@@ -110,10 +121,10 @@ public class GeoTiff {
 
     double getAvgFromNeighborhood(Area refPoly, int radius) 	{
         int size = (radius * 2) + 1;
-        int point[] = coorsToPixel(refPoly.getMiddleCoordinate());
+        int point[] = coorsToPixel(refPoly.center());
         double[] coverages = new double[size * size];
         double[] values = new double[size * size];
-        //Area polyArea = new Area(refPoly);
+
         double refPolyArea = refPoly.getArea();
         int k = 0;
 
@@ -126,7 +137,8 @@ public class GeoTiff {
                 coverages[k] = coverages[k] / refPolyArea * 100;
 
                 values[k] = getPxValue(i,j);;
-                if(values[k] == -3.3999999521443642E38) {
+                if(values[k] == -3.3999999521443642E38 || values[k] == -3.4E38 || values[k] == -32768.0
+                || Float.isNaN(getPxValue(i,j))) {
                     values[k] = 0;
                     coverages[k] = 0;
                 }
